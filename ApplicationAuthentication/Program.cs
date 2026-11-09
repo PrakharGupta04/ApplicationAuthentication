@@ -24,6 +24,8 @@ builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
 builder.Services.AddScoped<IApplicationRepository, ApplicationRepository>();
 builder.Services.AddScoped<IApplicationValidationService, ApplicationValidationService>();
 builder.Services.AddScoped<IUserAuthorizationProvider, UserAuthorizationProvider>();
+builder.Services.AddScoped<IUserApplicationRepository, UserApplicationRepository>();
+builder.Services.AddScoped<IUserApplicationAccessService, UserApplicationAccessService>();
 
 
 //var passwordHasher = new PasswordHashingService();

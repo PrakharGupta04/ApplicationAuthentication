@@ -17,13 +17,26 @@ namespace ApplicationAuthentication.Repositories
         {
             const string sql = """
                 
-                SELECT UserId, UserName, PasswordHash,IsActive,IsBlocked,CreatedAt
+                SELECT UserId, UserName, PasswordHash,IsActive,IsBlocked,CreatedAt 
                 FROM Users
                 WHERE UserId = @UserId;
                 
-                """;
+                """; //updates the existing employee password hash.
             using var connection = _databaseConnection.CreateConnection();
             return await connection.QueryFirstOrDefaultAsync<User>(sql, new { userId = userId });
         }
-    }
+
+        public async Task UpdatePasswordHashAsync(string userId, string newPasswordHash)
+		{
+			const string sql = """
+                
+                UPDATE Users
+                SET PasswordHash = @NewPasswordHash
+                WHERE UserId = @UserId;
+                
+                """;
+			using var connection = _databaseConnection.CreateConnection();
+			await connection.ExecuteAsync(sql, new { UserId = userId, NewPasswordHash = newPasswordHash });
+		}
+	}
 }

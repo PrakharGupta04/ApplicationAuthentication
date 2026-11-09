@@ -25,6 +25,11 @@ public class AuthenticationService : IAuthenticationService{
 		}
 		var passwordVerificationResult = _passwordHashingService.VerifyPassword(user.PasswordHash, password); // password validation
 		if (passwordVerificationResult == PasswordVerificationResult.Failed) { return null; }
+		if (passwordVerificationResult == PasswordVerificationResult.SuccessRehashNeeded)
+		{
+			var newPasswordHash = _passwordHashingService.HashPassword(password);
+			await _userRepository.UpdatePasswordHashAsync(user.UserId, newPasswordHash);
+		}
 		return new UserAuthenticationResult
 		{
 			UserId = user.UserId,
