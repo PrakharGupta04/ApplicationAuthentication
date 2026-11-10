@@ -10,9 +10,10 @@ public class UserApplicationAccessService : IUserApplicationAccessService
 	{
 		_userApplicationRepository = userApplicationRepository;
 	}
-	public async Task<bool> IsUserAllowedAsync(string userId, string applicationId)
+	public async Task<bool> IsUserAllowedAsync(string userId, string applicationId
+		, CancellationToken cancellationToken = default)
 	{
-		return await _userApplicationRepository.IsUserAssignedToApplicationAsync(userId, applicationId);
+		return await _userApplicationRepository.IsUserAssignedToApplicationAsync(userId, applicationId, cancellationToken);
 	}
 
 }

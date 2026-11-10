@@ -16,9 +16,10 @@ public class AuthenticationService : IAuthenticationService{
 		_userRepository = userRepository;
 		_passwordHashingService = passwordHashingService;
 	}
-	public async Task<UserAuthenticationResult?> AuthenticateUserAsync(string userId, string password)
+	public async Task<UserAuthenticationResult?> AuthenticateUserAsync(string userId, string password,
+		CancellationToken cancellationToken = default)
 	{
-		var user = await _userRepository.GetByUserIdAsync(userId); // status validation
+		var user = await _userRepository.GetByUserIdAsync(userId, cancellationToken); // status validation
 		if (user == null || !user.IsActive || user.IsBlocked)
 		{
 			return null;
@@ -28,7 +29,7 @@ public class AuthenticationService : IAuthenticationService{
 		if (passwordVerificationResult == PasswordVerificationResult.SuccessRehashNeeded)
 		{
 			var newPasswordHash = _passwordHashingService.HashPassword(password);
-			await _userRepository.UpdatePasswordHashAsync(user.UserId, newPasswordHash);
+			await _userRepository.UpdatePasswordHashAsync(user.UserId, newPasswordHash, cancellationToken);
 		}
 		return new UserAuthenticationResult
 		{

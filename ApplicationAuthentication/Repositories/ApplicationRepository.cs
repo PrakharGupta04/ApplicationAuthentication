@@ -12,14 +12,19 @@ public class ApplicationRepository : IApplicationRepository
 	{
 		_databaseConnection = databaseConnection;
 	}
-	public async Task<Application?> GetByApplicationIdAsync(string applicationId) {
+	public async Task<Application?> GetByApplicationIdAsync(string applicationId,
+		CancellationToken cancellationToken=default) {
 		const string sql = """
 			SELECT ApplicationId, ApplicationName, HashKey,IsActive,CreatedAt
 			FROM Applications
 			WHERE ApplicationId = @ApplicationId;
 			""";
+		var command = new CommandDefinition(commandText:sql,
+			 parameters: new { ApplicationId = applicationId }, 
+			 cancellationToken: cancellationToken);
+
 		using var connection = _databaseConnection.CreateConnection();
-		var application = await connection.QueryFirstOrDefaultAsync<Application>(sql, new { ApplicationId = applicationId });
+		var application = await connection.QueryFirstOrDefaultAsync<Application>(command);
 
 		return application;
 	}

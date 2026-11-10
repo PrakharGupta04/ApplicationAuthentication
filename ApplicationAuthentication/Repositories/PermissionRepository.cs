@@ -12,7 +12,8 @@ public class PermissionRepository : IPermissionRepository
 	{
 		_databaseConnection = databaseConnection;
 	}
-	public async Task<IEnumerable<Permission>> GetPermissionsByUserIdAsync(string userId, string applicationId)
+	public async Task<IEnumerable<Permission>> GetPermissionsByUserIdAsync(string userId, string applicationId
+		,CancellationToken  cancellationToken = default)
 	{
 		const string sql = """
 			SELECT DISTINCT p.PermissionId,p.ApplicationId, p.PermissionCode, p.PermissionName, p.Description, p.IsActive, p.CreatedAt
@@ -30,10 +31,16 @@ public class PermissionRepository : IPermissionRepository
 			  AND g.IsActive = 1
 			  AND p.IsActive = 1
 			  AND ug.ApplicationId = @ApplicationId
-			  AND p.ApplicationId = @ApplicationId;
+			  AND p.ApplicationId = @ApplicationId
+			  AND g.ApplicationId = @ApplicationId
+			  AND ug.IsActive = 1;
 			""";
+		var command = new CommandDefinition(commandText: sql,
+			parameters: new { UserId = userId, ApplicationId = applicationId },
+			cancellationToken: cancellationToken);
+			
 		using var connection = _databaseConnection.CreateConnection();
-		var permissions = await connection.QueryAsync<Permission>(sql, new { UserId = userId, ApplicationId = applicationId });
+		var permissions = await connection.QueryAsync<Permission>(command);
 		return permissions;
 
 	}

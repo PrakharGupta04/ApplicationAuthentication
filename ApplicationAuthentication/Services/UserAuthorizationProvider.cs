@@ -25,20 +25,20 @@ public class UserAuthorizationProvider : IUserAuthorizationProvider
 		CancellationToken cancellationToken = default)
 	{
 		cancellationToken.ThrowIfCancellationRequested();
-		var user = await _userRepository.GetByUserIdAsync(userId);
+		var user = await _userRepository.GetByUserIdAsync(userId, cancellationToken);
 		if (user is null || !user.IsActive || user.IsBlocked)
 		{
 			return null;
 		}
 		var isAssigned = await _userApplicationAccessService 
-			.IsUserAllowedAsync(userId, applicationId);
+			.IsUserAllowedAsync(userId, applicationId, cancellationToken);
 		if (!isAssigned)
 		{
 			return null;
 		}
-		var groups = await _groupRepository.GetGroupsByUserIdAsync(userId, applicationId);
+		var groups = await _groupRepository.GetGroupsByUserIdAsync(userId, applicationId, cancellationToken);
 		cancellationToken.ThrowIfCancellationRequested();
-		var permissions = await _permissionRepository.GetPermissionsByUserIdAsync(userId, applicationId);
+		var permissions = await _permissionRepository.GetPermissionsByUserIdAsync(userId, applicationId, cancellationToken);
 		return new UserAuthorizationResult
 		{
 			Roles = groups.Select(g => g.GroupName).ToList(),

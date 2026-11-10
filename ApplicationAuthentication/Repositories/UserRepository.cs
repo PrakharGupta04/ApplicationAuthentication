@@ -13,7 +13,7 @@ namespace ApplicationAuthentication.Repositories
         {
             _databaseConnection = databaseConnection;
         }
-        public async Task<User?> GetByUserIdAsync(string userId)
+        public async Task<User?> GetByUserIdAsync(string userId, CancellationToken cancellationToken = default)
         {
             const string sql = """
                 
@@ -21,12 +21,14 @@ namespace ApplicationAuthentication.Repositories
                 FROM Users
                 WHERE UserId = @UserId;
                 
-                """; //updates the existing employee password hash.
+                """;
+            var command = new CommandDefinition(commandText: sql,
+                parameters: new { UserId = userId }, cancellationToken: cancellationToken);
             using var connection = _databaseConnection.CreateConnection();
-            return await connection.QueryFirstOrDefaultAsync<User>(sql, new { userId = userId });
+            return await connection.QueryFirstOrDefaultAsync<User>(command);
         }
 
-        public async Task UpdatePasswordHashAsync(string userId, string newPasswordHash)
+        public async Task UpdatePasswordHashAsync(string userId, string newPasswordHash, CancellationToken cancellationToken = default)
 		{
 			const string sql = """
                 
@@ -35,8 +37,10 @@ namespace ApplicationAuthentication.Repositories
                 WHERE UserId = @UserId;
                 
                 """;
+            var command = new CommandDefinition(commandText: sql, 
+                parameters:new {UserId=userId,NewPasswordHash=newPasswordHash }, cancellationToken: cancellationToken);
 			using var connection = _databaseConnection.CreateConnection();
-			await connection.ExecuteAsync(sql, new { UserId = userId, NewPasswordHash = newPasswordHash });
+			await connection.ExecuteAsync(command);
 		}
 	}
 }
