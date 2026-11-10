@@ -3,5 +3,5 @@ namespace ApplicationAuthentication.Repositories.Interfaces;
 
 public interface IPermissionRepository
 {
-	Task<IEnumerable<Permission>> GetPermissionsByUserIdAsync(string userId);
+	Task<IEnumerable<Permission>> GetPermissionsByUserIdAsync(string userId, string applicationId);
 }

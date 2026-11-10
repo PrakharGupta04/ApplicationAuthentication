@@ -9,19 +9,20 @@ public class GroupRepository : IGroupRepository {
 	private readonly DatabaseConnection _databaseConnection;
 	public GroupRepository(DatabaseConnection databaseConnection) {
 		_databaseConnection = databaseConnection; }
-	public async Task<IEnumerable<Group>> GetGroupsByUserIdAsync(string userId)
+	public async Task<IEnumerable<Group>> GetGroupsByUserIdAsync(string userId, string applicationId)
 	{
 		const string sql = """
 			SELECT
-			g.GroupId, g.GroupName, g.Description, g.IsActive, g.CreatedAt
+			g.GroupId,g.ApplicationId, g.GroupName, g.Description, g.IsActive, g.CreatedAt
 			FROM Groups g
 			INNER JOIN UserGroups ug
 			     ON g.GroupId = ug.GroupId
 			WHERE ug.UserId =@UserId
+			    AND g.ApplicationId = @ApplicationId
 			    AND g.IsActive =1;
 			""";
 		using var connection = _databaseConnection.CreateConnection();
-		var groups = await connection.QueryAsync<Group>(sql, new { UserId = userId });
+		var groups = await connection.QueryAsync<Group>(sql, new { UserId = userId, ApplicationId = applicationId });
 		return groups; 
 	}
 
