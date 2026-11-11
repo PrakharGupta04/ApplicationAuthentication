@@ -1,3 +1,4 @@
 <Solution>
   <Project Path="ApplicationAuthentication/ApplicationAuthentication.csproj" />
+  <Project Path="EmployeePortalDemo/EmployeePortalDemo.csproj" Id="f29d5829-6700-4052-badc-c891749a586d" />
 </Solution>
