@@ -21,7 +21,6 @@ public class GroupRepository : IGroupRepository {
 				 AND g.ApplicationId = ug.ApplicationId
 			WHERE ug.UserId =@UserId
 			    AND g.ApplicationId = @ApplicationId
-			    AND ug.IsActive = 1
 			    AND g.IsActive =1;
 			""";
 		var command = new CommandDefinition (commandText :sql,

@@ -32,8 +32,7 @@ public class PermissionRepository : IPermissionRepository
 			  AND p.IsActive = 1
 			  AND ug.ApplicationId = @ApplicationId
 			  AND p.ApplicationId = @ApplicationId
-			  AND g.ApplicationId = @ApplicationId
-			  AND ug.IsActive = 1;
+			  AND g.ApplicationId = @ApplicationId;
 			""";
 		var command = new CommandDefinition(commandText: sql,
 			parameters: new { UserId = userId, ApplicationId = applicationId },
