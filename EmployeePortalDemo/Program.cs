@@ -11,6 +11,16 @@ builder.Services.AddHttpClient<AuthenticationApiClient>(client =>
 // Add services to the container.
 builder.Services.AddRazorPages();
 
+builder.Services.AddDistributedMemoryCache();
+
+builder.Services.AddSession(options =>
+{
+	options.IdleTimeout = TimeSpan.FromMinutes(20);
+	options.Cookie.HttpOnly = true;
+	options.Cookie.IsEssential = true;
+	options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+});
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -24,7 +34,7 @@ if (!app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseRouting();
-
+app.UseSession();
 app.UseAuthorization();
 
 app.MapStaticAssets();
